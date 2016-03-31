@@ -1,0 +1,90 @@
+haproxy:
+  image: dockercloud/haproxy:1.2.1
+  volumes:
+      - /certs
+  ports:
+      - "80:80"
+      - "443:443"
+      - "1936:1936"
+  environment:
+    TIMEOUT: "connect 1000, client 5000, server 60000"
+    STATS_AUTH: stats:stats
+    EXTRA_SSL_CERTS: SELF_SSL_CERT
+    SELF_SSL_CERT: |
+      -----BEGIN PRIVATE KEY-----
+      MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCr4lffVPGXTuNs
+      plafILPxucWvdk6G5swJfxESyW3sNwc4pPV3lFC71pqH3XWC2UExe3XnY4ITWCeJ
+      2KNqBcpkiPghY2TGrNNLd5mXhBPR6dxzT1So+DjkYwoYWJJrdbrV8TYugNLMRP5r
+      zEa2TMciiSwvl6bZtx7T8xoYVKPuhSCGVqSNBIyEEh5w5AFZ9d9uVdAQxQ2hGEnd
+      7Q77Qrv6JOOyEOeOkS/KyXosa+9dvTRwD9vYQSVSpteSpJGjW3BA0WywPFoECTYo
+      4fA585hPniWaT4vaorNwQPeupBV/iBeQB9mbOorBLmQslU+8q/9AJvs6Y0jKOfSC
+      mlVxIE4BAgMBAAECggEAMk5bo4yr7Ln1C/6fCZG7uLrDZfg9QXRZMUpUR+hWWLU+
+      UtDM2wO4oVFNBwjE9Nf7Ia1ds6xHDLxXThvusAAj3UrNPJBnlVJNwR+u/05zspM8
+      py8HuzBzDj0CXl/F8teRKD6hufiQOaLTx98QrxhHjA8TtJYxCjVzO1tCPu6+z/cB
+      n8/CShzKcr1jIR40l2ipsSgMws64oEDTUromd/U/94XmuGbawcq8xNNrdNfcI6W1
+      eWNSht935HsLtzdgbs7GZ5jON+ogyMZJzmUBGJsJccR2hhHKTQitnt7uQ6R+Jyu/
+      yzmeQ8x8o0YiMjoZojAVqbivMTEUh0DRl71Yp2nRxQKBgQDgJr/76XcuczPnL1HM
+      zkSZVutUJYR1JNXrqplgRDFGKyIJ5P8VhMYseIS7qMNdeXJtRhyaUBa1X7YvKkJ9
+      9miYm0e6jEUsQExGacZtstRqIShKwNlfCuLS3bMOftyXzE1QS6qPlDts4CnwQVqe
+      0xXmLUXOkJxixQWqIJPaD9HjIwKBgQDETm7fEVpnImvB9cIfixoRye3sAU7G+MNa
+      xsKCcXTW680nhvqwVGFXRuUPH7chllLZ3G+sb2GdcrGo2D0+vg5cL6iONyBlm5qg
+      zlM2N65xBgjxdvkqmS0Az3XpeP0AAcMPdXX5RnMGjWrvQ0W+bbvzYr2bahjSxSm1
+      dGrsOnK+iwKBgFFrId8h/W184QR/dqn63oYIQXCONB/M4ns4u39xJajEMBgB+vnZ
+      AZbTq/ryIQyJ+ZthlTAkGSuGeYmGQyK352RPOu2y18lsDYiiETZ1d5yZMKZ+iDZy
+      oNNRPiHsyLnGtuqMoYaHpFI21mTziDQanmC+XxXaB0QFJrqWHL5fcrCbAoGAEuga
+      9ZEOS/CcwEmTMMaM9DmmmJxnofJDnnKWOUoEHs8HK09sxZ7a4TUKyrIbSTjZMfJx
+      LwJrPGbXhZOOEoTrjSVp7oiQrjiWY/Z7PTWPr4MNSXRT+y5Vj0Zr7NiiRWXmC48c
+      la2bVn44VmL8TKL0/zP7XwSQ73vd0IQt6CKY+pECgYAevJAOLClZvNzL/QE+LSVq
+      V22ZdnfC52SD5EHMV+lW5EgCjWcn7LcKpZWWKHWWRqIhBdtXmbVKvdshKtI0L3os
+      iGYlQGzsx0bQjIiiwIPvSlZ4Sa2M2Ek4Il7MppbHYbEulX7NjwlKpBOtUvlCUrVr
+      Z/LILr8OF8HOlyeKl3pFtQ==
+      -----END PRIVATE KEY-----
+      -----BEGIN CERTIFICATE-----
+      MIIDSzCCAjOgAwIBAgIJAPqulHOcVe+jMA0GCSqGSIb3DQEBCwUAMDwxCjAIBgNV
+      BAMMASoxITAfBgNVBAoMGGZvby8vYmFyIHdlYiBkZXZlbG9wbWVudDELMAkGA1UE
+      BhMCTlowHhcNMTYwMzI5MjI1NDA5WhcNMTkwMzE0MjI1NDA5WjA8MQowCAYDVQQD
+      DAEqMSEwHwYDVQQKDBhmb28vL2JhciB3ZWIgZGV2ZWxvcG1lbnQxCzAJBgNVBAYT
+      Ak5aMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAq+JX31Txl07jbKZW
+      nyCz8bnFr3ZOhubMCX8REslt7DcHOKT1d5RQu9aah911gtlBMXt152OCE1gnidij
+      agXKZIj4IWNkxqzTS3eZl4QT0encc09UqPg45GMKGFiSa3W61fE2LoDSzET+a8xG
+      tkzHIoksL5em2bce0/MaGFSj7oUghlakjQSMhBIecOQBWfXfblXQEMUNoRhJ3e0O
+      +0K7+iTjshDnjpEvysl6LGvvXb00cA/b2EElUqbXkqSRo1twQNFssDxaBAk2KOHw
+      OfOYT54lmk+L2qKzcED3rqQVf4gXkAfZmzqKwS5kLJVPvKv/QCb7OmNIyjn0gppV
+      cSBOAQIDAQABo1AwTjAdBgNVHQ4EFgQUtqXX7OpPbln5jQbGEHGau8E3wAgwHwYD
+      VR0jBBgwFoAUtqXX7OpPbln5jQbGEHGau8E3wAgwDAYDVR0TBAUwAwEB/zANBgkq
+      hkiG9w0BAQsFAAOCAQEAK129zJKoYkxy1IqSJgDXeg4+1X1UWdKO6XU3vAih4bvq
+      GKazEuCVOHzDXNnv593z99B8GSCsp9YlsEvLPrmVuoq9Ii2H4XFhJJK+w42Jja3f
+      J0gvT3Q6g8gzS86hybI7OK+3uJpR/+JP0MzTk4n9NqDGxxNNBwfYJ/uI5/DgMja/
+      f3WdlLXomiyEtwZ2wqNm4eu+uUYpHoVkIU/0ODd/zPO6iI3pfnl8ji9JZJLO+Rwg
+      D2bdteVQ6UYKd6rsVGMwqe6xBm2jec3tehuJDCCuSKpShY2NgkMsIgQB4KFG5FeI
+      STJsOeH/nl9P+3hClbx4bsu1T4WuYbK5HywkPnkXHA==
+      -----END CERTIFICATE-----
+  links:
+    - www
+
+www:
+  image: php:5-apache
+  volumes:
+   - /var/www/html
+  environment:
+    VIRTUAL_HOST: "*,https://*"
+
+le:
+  image: quay.io/letsencrypt/letsencrypt
+  command: >
+     certonly
+      --email webmaster@foobar.net.nz
+      --domains haproxy.foobar.8180c549.svc.dockerapp.io
+      --no-self-upgrade
+      --non-interactive
+      --agree-tos
+      --webroot
+      --webroot-path /var/www/html
+      --text
+      --fullchain-path /certs/
+  volumes:
+    - "/etc/letsencrypt"
+    - "/var/lib/letsencrypt"
+  volumes_from:
+    - www
+    - haproxy
