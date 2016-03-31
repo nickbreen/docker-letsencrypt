@@ -17,11 +17,11 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -qqy git &&
 
 RUN git clone https://github.com/letsencrypt/letsencrypt /opt/letsencrypt
 
-RUN DEBIAN_FRONTEND=noninteractive /opt/letsencrypt/letsencrypt-auto --os-packages-only && apt-get clean
-
-RUN /opt/letsencrypt/letsencrypt-auto plugins --prepare
-
 RUN /opt/letsencrypt/letsencrypt-auto --help
+
+RUN TMP=$(mktemp -d); git clone https://github.com/nickbreen/letsencrypt_haproxy $TMP && \
+  cp -r $TMP/letsencrypt_haproxy $TMP/letsencrypt_haproxy-0.0.1.dist-info \
+    /root/.local/share/letsencrypt/lib/python2.7/site-packages/
 
 COPY cli.ini /etc/opt/letsencrypt/
 
