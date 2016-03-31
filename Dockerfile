@@ -13,7 +13,7 @@ RUN /opt/letsencrypt-$LE_VER/letsencrypt-auto-source/letsencrypt-auto --os-packa
 
 RUN cd /opt/letsencrypt-$LE_VER && tools/venv.sh
 
-ENV COMB_VER=0.1.0
+ENV COMB_VER=1.0.0-beta1
 
 RUN curl -LsSf https://github.com/nickbreen/letsencrypt-combined-installer/archive/v$COMB_VER.tar.gz | tar zx -C /opt
 
@@ -25,4 +25,9 @@ COPY cli.ini $XDG_CONFIG_HOME/letsencrypt/
 
 COPY le.sh /usr/local/bin/le
 
-RUN le --help combined:combined
+# Test
+RUN le --help letsencrypt-combined:combined && \
+    TMP=$(mktemp -d) && cd $TMP && \
+    openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 90 -nodes -subj '/CN=*/O=Test/C=NZ' && \
+    le install --cert-path cert.pem --key-path key.pem --domains example.com --letsencrypt-combined:combined-path . || \
+    ( cat /var/log/letsencrypt/*.log && false ) && cd && rm -rf $TMP
