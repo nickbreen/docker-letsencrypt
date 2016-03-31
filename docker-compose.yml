@@ -1,10 +1,10 @@
-version: '2'
-services:
-  le:
-    image: nickbreen/letsencrypt
-    build: .
-    volumes:
-      - /certs
-    environment:
-      CRON_D_LE: |
-        @monthly root /opt/letsencrypt/cron | logger
+le:
+  build: .
+  volumes:
+    - /certs # mount this from the haproxy
+    - /var/www # mouhnt this from the web server
+  environment:
+    CRON_D_LE: |
+      @monthly root . /opt/letsencrypt/venv/bin/activate && \
+                    . /etc/container_environment.sh && \
+                    letsencrypt renew | logger
