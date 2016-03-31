@@ -5,22 +5,24 @@ MAINTAINER Nick Breen <nick@foobar.net.nz>
 # Derived from https://letsencrypt.org/getting-started/
 # Then re-derived from https://letsencrypt.readthedocs.org/en/latest/contributing.html
 
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -qqy git && apt-get clean
+ENV LE_VER=0.4.2
 
-RUN git clone https://github.com/letsencrypt/letsencrypt /opt/letsencrypt
+RUN curl -LsSf https://github.com/letsencrypt/letsencrypt/archive/v$LE_VER.tar.gz | tar zx -C /opt
 
-WORKDIR /opt/letsencrypt
+RUN /opt/letsencrypt-$LE_VER/letsencrypt-auto-source/letsencrypt-auto --os-packages-only
 
-RUN letsencrypt-auto-source/letsencrypt-auto --os-packages-only
+RUN cd /opt/letsencrypt-$LE_VER && tools/venv.sh
 
-RUN tools/venv.sh
+ENV COMB_VER=0.1.0
 
-RUN git clone https://github.com/nickbreen/letsencrypt-combined-installer /opt/letsencrypt-combined-installer
+RUN curl -LsSf https://github.com/nickbreen/letsencrypt-combined-installer/archive/v$COMB_VER.tar.gz | tar zx -C /opt
 
-RUN . venv/bin/activate && cd /opt/letsencrypt-combined-installer && python setup.py install
-
-COPY cli.ini /etc/opt/letsencrypt/
+RUN . /opt/letsencrypt-$LE_VER/venv/bin/activate && cd /opt/letsencrypt-combined-installer-$COMB_VER && python setup.py install
 
 ENV XDG_CONFIG_HOME=/etc/opt
 
-RUN . venv/bin/activate && letsencrypt --help combined:combined
+COPY cli.ini $XDG_CONFIG_HOME/letsencrypt/
+
+RUN . /opt/letsencrypt-$LE_VER/venv/bin/activate && letsencrypt --help combined:combined
+
+COPY le.sh /usr/local/bin
