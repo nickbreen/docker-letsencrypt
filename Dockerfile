@@ -21,13 +21,14 @@ RUN . /opt/letsencrypt-$LE_VER/venv/bin/activate && cd /opt/letsencrypt-combined
 
 ENV XDG_CONFIG_HOME=/etc/opt
 
-COPY cli.ini $XDG_CONFIG_HOME/letsencrypt/
+COPY *.ini $XDG_CONFIG_HOME/letsencrypt/
 
 COPY le.sh /usr/local/bin/le
 
 # Test
-RUN le --help letsencrypt-combined:combined && \
-    TMP=$(mktemp -d) && cd $TMP && \
-    openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 90 -nodes -subj '/CN=*/O=Test/C=NZ' && \
-    le install --cert-path cert.pem --key-path key.pem --domains example.com --letsencrypt-combined:combined-path . || \
-    ( cat /var/log/letsencrypt/*.log && false ) && cd && rm -rf $TMP
+RUN TMP=$(mktemp -d) && cd $TMP && \
+    (openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 90 -nodes -subj '/CN=example.com/O=Test/C=NZ' && \
+    le -c /etc/opt/letsencrypt/install.ini install --cert-path cert.pem --key-path key.pem --domains example.com --letsencrypt-combined:combined-path . && \
+    test -s example.com.pem ) || \
+    ( cat /var/log/letsencrypt/*.log && false ) && \
+    cd && rm -rf $TMP
