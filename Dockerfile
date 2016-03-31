@@ -25,4 +25,4 @@ COPY cli.ini $XDG_CONFIG_HOME/letsencrypt/
 
 RUN . /opt/letsencrypt-$LE_VER/venv/bin/activate && letsencrypt --help combined:combined
 
-COPY le.sh /usr/local/bin
+COPY le.sh /usr/local/bin/le
