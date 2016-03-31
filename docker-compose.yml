@@ -5,6 +5,4 @@ le:
     - /var/www # mouhnt this from the web server
   environment:
     CRON_D_LE: |
-      @monthly root . /opt/letsencrypt/venv/bin/activate && \
-                    . /etc/container_environment.sh && \
-                    letsencrypt renew | logger
+      @monthly root le renew | logger

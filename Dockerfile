@@ -23,6 +23,6 @@ ENV XDG_CONFIG_HOME=/etc/opt
 
 COPY cli.ini $XDG_CONFIG_HOME/letsencrypt/
 
-RUN . /opt/letsencrypt-$LE_VER/venv/bin/activate && letsencrypt --help combined:combined
-
 COPY le.sh /usr/local/bin/le
+
+RUN le --help combined:combined
