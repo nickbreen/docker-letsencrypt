@@ -27,8 +27,13 @@ COPY le.sh /usr/local/bin/le
 
 # Test
 RUN TMP=$(mktemp -d) && cd $TMP && \
+    le --help letsencrypt-combined:combined && \
     (openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 90 -nodes -subj '/CN=example.com/O=Test/C=NZ' && \
-    le -c /etc/opt/letsencrypt/install.ini install --cert-path cert.pem --key-path key.pem --domains example.com --letsencrypt-combined:combined-path . && \
+    le -vvv --config /etc/opt/letsencrypt/install.ini install \
+        --cert-path cert.pem \
+        --key-path key.pem \
+        --domains example.com \
+        --letsencrypt-combined:combined-path . && \
     test -s example.com.pem ) || \
-    ( cat /var/log/letsencrypt/*.log && false ) && \
+    ( cat /var/log/letsencrypt/letsencrypt.log && false ) && \
     cd && rm -rf $TMP
