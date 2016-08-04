@@ -2,4 +2,4 @@
 
 . $LE_DIR/venv/bin/activate
 
-exec letsencrypt "${@}"
+exec certbot "${@}"

@@ -1,8 +1,9 @@
 version: '2'
 services:
   le:
-    image: nickbreen/letsencrypt
-    build: .
+    image: nickbreen/letsencrypt:v1.2.0
+    build:
+        context: .
     volumes:
       - /certs # mount this from the haproxy
       - /var/www # mount this from the web server
