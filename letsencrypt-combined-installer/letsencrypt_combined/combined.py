@@ -7,8 +7,8 @@ import zope.interface
 import dockercloud
 from dockercloud.api.base import Exec
 
-from certbot import interfaces
-from certbot.plugins import common
+from letsencrypt import interfaces
+from letsencrypt.plugins import common
 
 logger = logging.getLogger(__name__)
 
@@ -160,4 +160,3 @@ class DockercloudInstaller(common.Plugin):
             ex.on_error = lambda ws, m: logger.error(m)
             ex.on_open = combined
             ex.on_close = lambda ws: logger.info("Wrote combined file to: %s" % path)
-
