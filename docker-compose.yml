@@ -1,7 +1,7 @@
 version: '2'
 services:
   le:
-    image: nickbreen/letsencrypt:v1.2.1
+    image: nickbreen/letsencrypt:v2.0.0
     build:
         context: .
     volumes:
