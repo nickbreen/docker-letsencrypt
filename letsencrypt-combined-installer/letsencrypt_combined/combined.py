@@ -19,10 +19,10 @@ class CombinedInstaller(common.Plugin):
     zope.interface.implements(interfaces.IInstaller)
     zope.interface.classProvides(interfaces.IPluginFactory)
 
-    description = "Combined Certificate Installer"
+    description = 'Combined Certificate Installer'
 
     def more_info(self):  # pylint: disable=missing-docstring,no-self-use
-        return ""
+        return ''
 
     def get_all_names(self):  # pylint: disable=missing-docstring,no-self-use
         pass  # pragma: no cover
@@ -56,31 +56,31 @@ class CombinedInstaller(common.Plugin):
 
     @classmethod
     def add_parser_arguments(cls, add):
-        add("path", default=os.path.normpath("/certs/"),
+        add('path', default=os.path.normpath('/certs/'),
             help="Path to install combined certificates to.")
 
     def prepare(self):  # pylint: disable=missing-docstring
-        path = self.conf("path")
+        path = self.conf('path')
         path = os.path.realpath(path)
-        logger.debug("Combined directory: %s" % (path))
+        logger.debug('Combined directory: %s' % (path))
         assert os.path.isdir(path)
         self.path = path
 
     def deploy_cert(self, domain, cert_path, key_path, chain_path, fullchain_path): # pylint: disable=missing-docstring
-        path = "%s.pem" % (os.path.join(self.path, domain))
-        logger.debug("Combined file: %s" % (path))
-        combined = open(path, "w")
+        path = '%s.pem' % (os.path.join(self.path, domain))
+        logger.debug('Combined file: %s' % (path))
+        combined = open(path, 'w')
         # Write key, cert & chain in one file
         for x_path in [key_path, cert_path, chain_path]:
             if x_path and os.path.isfile(x_path):
-                logger.debug("Concatenating file: %s" % x_path)
-                x_file = open(x_path, "r")
+                logger.debug('Concatenating file: %s' % x_path)
+                x_file = open(x_path, 'r')
                 combined.write(x_file.read())
                 x_file.close()
             elif x_path:
-                raise ValueError("Must exist and be a file", x_path)
+                raise ValueError('Must exist and be a file', x_path)
         combined.close()
-        logger.info("Wrote combined file to: %s" % path)
+        logger.info('Wrote combined file to: %s' % path)
 
 
 class DockercloudInstaller(common.Plugin):
@@ -89,10 +89,10 @@ class DockercloudInstaller(common.Plugin):
     zope.interface.implements(interfaces.IInstaller)
     zope.interface.classProvides(interfaces.IPluginFactory)
 
-    description = "Combined Certificate Dockercloud Installer"
+    description = 'Combined Certificate Dockercloud Installer'
 
     def more_info(self):  # pylint: disable=missing-docstring,no-self-use
-        return ""
+        return ''
 
     def get_all_names(self):  # pylint: disable=missing-docstring,no-self-use
         pass  # pragma: no cover
@@ -126,20 +126,20 @@ class DockercloudInstaller(common.Plugin):
 
     @classmethod
     def add_parser_arguments(cls, add):
-        add("service", default="haproxy",
+        add('service', default='haproxy',
             help="Service name to install combined certificates to (containers of).")
-        add("envvar", default="CERTS_FOLDER",
+        add('envvar', default='CERT_FOLDER',
             help="Service's environment variable name that specifies the location to install combined certificates to.")
 
     def prepare(self):  # pylint: disable=missing-docstring
-        svcs = dockercloud.Service.list(name=self.conf("service"))
-        for svcref in svcs:
+        for svcref in dockercloud.Service.list(name=self.conf('service')):
             self.svc = dockercloud.Service.fetch(svcref.uuid)
             assert isinstance(self.svc, dockercloud.Service)
             envvars = {k: v for d in self.svc.container_envvars for k, v in d.items()}
-            if self.conf("envvar") in envvars:
-                self.path = envvars[self.conf("envvar")]
-        logger.debug("Service: %s; Path: %s" % (self.svc, self.path))
+            if self.conf('envvar') not in envvars:
+                raise ValueError('Environment variable specified does not exist for service', self.conf('envvar'), self.conf('service'))
+            self.path = envvars[self.conf('envvar')]
+            logger.debug('Service: %s; Path: %s' % (self.svc, self.path))
 
     def deploy_cert(self, domain, cert_path, key_path, chain_path, fullchain_path): # pylint: disable=missing-docstring
 
@@ -147,16 +147,16 @@ class DockercloudInstaller(common.Plugin):
             # Write key, cert & chain in one file
             for x_path in [key_path, cert_path, chain_path]:
                 assert os.path.isfile(x_path)
-                logger.debug("Concatenating file: %s" % x_path)
-                x_file = open(x_path, "r")
+                logger.debug('Concatenating file: %s' % x_path)
+                x_file = open(x_path, 'r')
                 ws.send(x_file.read())
                 x_file.close()
 
         for contref in self.svc.containers:
             cont = dockercloud.Container.fetch(contref.uuid)
-            path = "%s.pem" % (os.path.join(self.path, domain))
-            ex = Exec(cont.uuid, "cat - > %s" % path)
+            path = '%s.pem' % (os.path.join(self.path, domain))
+            ex = Exec(cont.uuid, 'cat - > %s' % path)
             ex.on_message = lambda ws, m: logger.info(m)
             ex.on_error = lambda ws, m: logger.error(m)
             ex.on_open = combined
-            ex.on_close = lambda ws: logger.info("Wrote combined file to: %s" % path)
+            ex.on_close = lambda ws: logger.info('Wrote combined file to: %s' % path)
