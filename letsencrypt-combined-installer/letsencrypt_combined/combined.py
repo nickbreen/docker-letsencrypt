@@ -4,7 +4,7 @@ import logging
 import zope.component
 import zope.interface
 
-import dockercloud
+from dockercloud import Service, Container
 from dockercloud.api.base import Exec
 
 from letsencrypt import interfaces
@@ -132,14 +132,15 @@ class DockercloudInstaller(common.Plugin):
             help="Service's environment variable name that specifies the location to install combined certificates to.")
 
     def prepare(self):  # pylint: disable=missing-docstring
-        for svcref in dockercloud.Service.list(name=self.conf('service')):
-            self.svc = dockercloud.Service.fetch(svcref.uuid)
-            assert isinstance(self.svc, dockercloud.Service)
-            envvars = {k: v for d in self.svc.container_envvars for k, v in d.items()}
+        for svcref in Service.list(name=self.conf('service')):
+            svc = Service.fetch(svcref.uuid)
+            assert isinstance(svc, Service)
+            envvars = {d['key']: d['value'] for d in svc.container_envvars}
             if self.conf('envvar') not in envvars:
                 raise ValueError('Environment variable specified does not exist for service', self.conf('envvar'), self.conf('service'))
             self.path = envvars[self.conf('envvar')]
             logger.debug('Service: %s; Path: %s' % (self.svc, self.path))
+            self.svc = svc
 
     def deploy_cert(self, domain, cert_path, key_path, chain_path, fullchain_path): # pylint: disable=missing-docstring
 
@@ -153,7 +154,7 @@ class DockercloudInstaller(common.Plugin):
                 x_file.close()
 
         for contref in self.svc.containers:
-            cont = dockercloud.Container.fetch(contref.uuid)
+            cont = Container.fetch(contref.uuid)
             path = '%s.pem' % (os.path.join(self.path, domain))
             ex = Exec(cont.uuid, 'cat - > %s' % path)
             ex.on_message = lambda ws, m: logger.info(m)

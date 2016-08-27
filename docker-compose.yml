@@ -9,15 +9,15 @@ services:
       - /var/www # mount this from the web server
     environment:
       CRON_D_LE: |
-        @reboot root sh /etc/container_environment/EXAMPLE_COM 2>&1 | logger
+        @reboot root sh -e /etc/container_environment/EXAMPLE_COM 2>&1 | logger
         @monthly root le renew 2>&1 | logger
       EXAMPLE_COM: |
-        TMP=$(mktemp -d)
-        openssl req -x509 -newkey rsa:2048 -keyout $TMP/key.pem -out $TMP/cert.pem -days 90 -nodes -subj '/CN=test.example.com/OU=Test/O=Example/C=US'
+        TMP=$$(mktemp -d)
+        openssl req -x509 -newkey rsa:2048 -keyout $$TMP/key.pem -out $$TMP/cert.pem -days 90 -nodes -subj '/CN=test.example.com/OU=Test/O=Example/C=US'
         letsencrypt -vvv --config /etc/opt/letsencrypt/install.ini install \
-          --cert-path $TMP/cert.pem \
-          --key-path $TMP/key.pem \
+          --cert-path $$TMP/cert.pem \
+          --key-path $$TMP/key.pem \
           --domains test.example.com \
-          --letsencrypt-combined:combined-path $TMP
-        test -s $TMP/test.example.com.pem
-        rm -rf $TMP
+          --letsencrypt-combined:combined-path $$TMP
+        test -s $$TMP/test.example.com.pem
+        rm -rf $$TMP
