@@ -21,7 +21,7 @@ RUN letsencrypt --help; \
         --domains test.example.com \
         --letsencrypt-combined:combined-path $TMP/ || cat letsencrypt.log && \
     test -s $TMP/test.example.com.pem) || exit 1 && \
-    rm -rf $TMP
+    rm -rf $TMP && rm -f /var/log/letsencrypt/*
 
 COPY 40-syslog.conf /etc/lighttpd/conf-available/
 RUN lighttpd-enable-mod syslog
